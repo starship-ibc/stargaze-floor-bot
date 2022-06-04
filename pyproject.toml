@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "channel-bot"
+version = "0.1.0"
+description = "Sets discord channel names with info."
+authors = ["Starship IBC <shrugs.rest0x@icloud.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+requests = "^2.27.1"
+requests-cache = "^0.9.4"
+
+[tool.poetry.dev-dependencies]
+black = "^22.3.0"
+isort = "^5.10.1"
+flake8 = "^4.0.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
