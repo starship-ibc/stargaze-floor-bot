@@ -29,6 +29,7 @@ client = FloorClient(
     intents=intents,
     config_manager=config_manager,
     interval=interval,
-    strict_validation=strict_validation)
+    strict_validation=strict_validation,
+)
 
 client.run(discord_key)

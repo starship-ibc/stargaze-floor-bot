@@ -5,11 +5,10 @@ import os
 from datetime import datetime
 
 import requests
-from stargazeutils.stargaze import QueryMethod
-from stargazeutils.stargaze import StargazeClient
 from stargazeutils.collection import Sg721Client
 from stargazeutils.common import MARKET_CONTRACT
 from stargazeutils.market import MarketClient
+from stargazeutils.stargaze import QueryMethod, StargazeClient
 
 LOG = logging.getLogger(__name__)
 sg_client = StargazeClient(query_method=QueryMethod.REST)

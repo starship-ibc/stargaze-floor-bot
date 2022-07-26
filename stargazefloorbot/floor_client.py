@@ -65,8 +65,7 @@ class FloorClient(discord.Client):
         for config in self.config_manager.get_configs():
             LOG.info(f"Updating asks for '{config.collection_name}'")
             self.latest_asks[config.collection_name] = fetch_trait_asks(
-                config.collection_name,
-                self.strict_validation
+                config.collection_name, self.strict_validation
             )
             LOG.info(f"Finished updating asks for '{config.collection_name}'")
 
