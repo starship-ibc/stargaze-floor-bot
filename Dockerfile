@@ -1,7 +1,6 @@
 ###
 FROM python:3.10 as poetry_builder
 
-
 ENV PATH="/root/.local/bin:$PATH"
 ENV POETRY_VIRTUALENVS_CREATE=false
 

@@ -120,6 +120,32 @@ docker run \
 
 You should see some basic output indicating that the configuration has loaded and a connection to Gateway established. Any invalid asks will also be sent to the output.
 
+### Running without docker
+
+Alternatively, you can run the bot without using containers as well. You will need to have the following dependencies installed on your machine:
+
+- [Python3.10](https://www.python.org/)
+- [Poetry](https://python-poetry.org/docs/master/#installation)
+
+Install the python dependencies:
+
+```sh
+poetry install
+```
+
+Set up your environment variables:
+
+```sh
+export DISCORD_KEY=<discord_key>
+```
+
+Run the project
+
+```sh
+poetry run python -m stargazefloorbot
+```
+
+
 ## Usage
 
 Once your bot is running and invited to your server, you can use the following app commands via the slash menu:
@@ -136,7 +162,7 @@ This command will prompt the user for a collection, trait name, and trait value 
 
 A special thanks to [Andromeda Labs](https://twitter.com/AndromaverseLab) for sponsoring this bot.
 
-Any other $STARS donations can be made to the following address. If you'd like to sponsor a specific issue, feel free to include it in the memo so I know it's important to the community.
+If you'd like to make a donation, you may send $STARS to the following address. If you're like to sponsor a specific issue, feel free to include it in the memo line so I know what's most important to the community.
 
 ```
 stars1z6mj02l2s8v0vsxfsark5v7t076ds8pu9nj2fv
