@@ -26,7 +26,7 @@ In order to reduce the number of permissions the bot needs to work, a one-time s
 
 1. Create a new voice channel (the name does not matter)
 2. Set up the following permissions for `@everyone`
-    
+
     - View Channel ✅
     - Everything else ❌
 
@@ -85,10 +85,10 @@ You will also need to know your `DISCORD_KEY` which can be found by clicking on 
 
 The bot requires the collection metadata to be cached ahead of time. When building the docker image (later) it will copy the `cache` folder to the docker image so it's best to pre-build those files if you haven't done so yet.
 
-You can generate cache files by looking at the following examples in the stargaze-utils github repo:
+You can generate cache files by looking at the following examples in the [stargaze-utils] github repo:
 
-- /examples/get_collection_info.py
-- /examples/get_new_collections.py
+- [/examples/get_collection_info.py](https://github.com/starship-ibc/stargaze-utils/blob/main/examples/get_collection_info.py)
+- [/examples/get_new_collections.py](https://github.com/starship-ibc/stargaze-utils/blob/main/examples/get_new_collections.py)
 
 ## Installation
 
@@ -145,7 +145,6 @@ Run the project
 poetry run python -m stargazefloorbot
 ```
 
-
 ## Usage
 
 Once your bot is running and invited to your server, you can use the following app commands via the slash menu:
@@ -164,6 +163,10 @@ A special thanks to [Andromeda Labs](https://twitter.com/AndromaverseLab) for sp
 
 If you'd like to make a donation, you may send $STARS to the following address. If you're like to sponsor a specific issue, feel free to include it in the memo line so I know what's most important to the community.
 
-```
+```txt
 stars1z6mj02l2s8v0vsxfsark5v7t076ds8pu9nj2fv
 ```
+
+[stargaze-utils]: https://github.com/starship-ibc/stargaze-utils
+[/examples/get_collection_info.py]: https://github.com/starship-ibc/stargaze-utils/blob/main/examples/get_collection_info.py
+[/examples/get_new_collections.py]: https://github.com/starship-ibc/stargaze-utils/blob/main/examples/get_new_collections.py
