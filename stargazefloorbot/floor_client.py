@@ -1,5 +1,6 @@
 import asyncio
 import logging
+from typing import List
 
 import discord
 
@@ -9,9 +10,35 @@ from discord import app_commands
 from stargazefloorbot.floor_flow import FloorFlow
 
 from .config import ConfigManager
-from .stargaze import fetch_floor, fetch_trait_asks
+from .stargaze import fetch_trait_asks
 
 LOG = logging.getLogger(__name__)
+
+
+def get_trend_emoji(x: List[int]) -> str:
+    if x[0] > x[-1]:
+        return "↗️"
+    elif x[0] == x[-1]:
+        return "➡️"
+    return "↘️"
+
+
+def get_min_ask(trait_asks: dict):
+    def asking_price(x):
+        return x["ask"].price.amount
+
+    return min(
+        (
+            [
+                min(
+                    [v[0] for v in t.values()],
+                    key=asking_price,
+                )
+                for t in trait_asks.values()
+            ]
+        ),
+        key=asking_price,
+    )
 
 
 class FloorClient(discord.Client):
@@ -22,6 +49,9 @@ class FloorClient(discord.Client):
         self.strict_validation = kwargs["strict_validation"]
         self.latest_asks = {}
         self.floors = {}
+
+        for config in self.config_manager.get_configs():
+            self.floors[config.collection_name] = [0, 0, 0, 0, 0]
 
         self.tree = app_commands.CommandTree(self)
 
@@ -53,27 +83,38 @@ class FloorClient(discord.Client):
 
     async def update_floor(self):
         for config in self.config_manager.get_configs():
+            print(f"floor for {config.collection_name}")
             guild = await self.fetch_guild(config.guild_id)
             channels = {c.id: c for c in await guild.fetch_channels()}
             channel = channels[config.channel_id]
-            floor = fetch_floor(config.sg721)
-            self.floors[config.collection_name] = floor
-            LOG.info(f"Updating floor for {config.sg721} to {floor}")
-            await channel.edit(name=f"{config.prefix}{floor}")
+            floor_history = self.floors[config.collection_name]
+            floor = floor_history[0]
+            trend_emoji = get_trend_emoji(floor_history)
+            LOG.info(
+                f"Updating floor for {config.collection_name} to {floor} {trend_emoji}"
+            )
+            await channel.edit(name=f"{config.prefix}{floor:,} {trend_emoji}")
 
     async def update_asks(self):
         for config in self.config_manager.get_configs():
             LOG.info(f"Updating asks for '{config.collection_name}'")
-            self.latest_asks[config.collection_name] = fetch_trait_asks(
+            trait_asks = fetch_trait_asks(
                 config.collection_name, self.strict_validation
             )
+            collection_floor = get_min_ask(trait_asks)
+
+            self.latest_asks[config.collection_name] = trait_asks
+            new_floor = collection_floor["ask"].price.get_stars()
+            self.floors[config.collection_name].insert(0, new_floor)
+            self.floors[config.collection_name].pop()
             LOG.info(f"Finished updating asks for '{config.collection_name}'")
 
     async def track_floor_pricing(self):
         await self.wait_until_ready()
+        print("ready")
         while not self.is_closed():
-            await self.update_floor()
             await self.update_asks()
+            await self.update_floor()
             await asyncio.sleep(self.interval)  # task runs every 60 seconds
 
     async def list_collections(self, interaction: discord.Interaction):

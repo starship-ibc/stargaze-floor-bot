@@ -2,16 +2,16 @@
 
 This is a [Discord] bot designed to display floor pricing for Stargaze NFT collections.
 
-* Uses a private locked channel to display the current floor price
-* Allows users to query for floor pricing of specific traits
+- Uses a private locked channel to display the current floor price
+- Allows users to query for floor pricing of specific traits
 
 ## Table of Contents
 
 - [Setup](#setup)
-    - [Create the floor channels](#create-the-floor-channels)
-    - [Create your configuration file](#create-your-configuration-file)
-    - [Create a discord bot](#create-a-discord-bot)
-    - [Create cached collection info](#create-cached-collection-info)
+  - [Create the floor channels](#create-the-floor-channels)
+  - [Create your configuration file](#create-your-configuration-file)
+  - [Create a discord bot](#create-a-discord-bot)
+  - [Create cached collection info](#create-cached-collection-info)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Donations](#donations)
@@ -32,7 +32,7 @@ In order to reduce the number of permissions the bot needs to work, a one-time s
 
 3. Note your `GUILD_ID` and `CHANNEL_ID`. You can do this by copying a link to the channel and examining it:
 
-```
+```txt
 https://discord.com/channels/<GUILD_ID>/<CHANNEL_ID>
 ```
 

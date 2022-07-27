@@ -7,6 +7,7 @@ from .config import ConfigManager
 from .floor_client import FloorClient
 
 logging.basicConfig(level=logging.INFO)
+logging.getLogger("stargazeutils.market.market_ask").setLevel(logging.ERROR)
 LOG = logging.getLogger(__name__)
 
 if "DISCORD_KEY" not in os.environ.keys():
