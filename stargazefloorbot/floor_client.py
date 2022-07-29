@@ -25,15 +25,16 @@ def get_min_ask(trait_asks: dict):
         return x["ask"].price.amount
 
     return min(
-        (
-            [
-                min(
-                    [v[0] for v in t.values()],
-                    key=asking_price,
-                )
-                for t in trait_asks.values()
-            ]
-        ),
+        [
+            min(
+                [
+                    min(value_asks, key=asking_price)
+                    for value_asks in trait_value.values()
+                ],
+                key=asking_price,
+            )
+            for trait_value in trait_asks.values()
+        ],
         key=asking_price,
     )
 
