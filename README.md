@@ -2,18 +2,22 @@
 
 This is a [Discord] bot designed to display floor pricing for Stargaze NFT collections.
 
-- Uses a private locked channel to display the current floor price
+- Uses a private locked channel to display the current floor price and trend
 - Allows users to query for floor pricing of specific traits
 
 ## Table of Contents
 
 - [Setup](#setup)
   - [Create the floor channels](#create-the-floor-channels)
-  - [Create your configuration file](#create-your-configuration-file)
   - [Create a discord bot](#create-a-discord-bot)
   - [Create cached collection info](#create-cached-collection-info)
 - [Installation](#installation)
+  - [Build the docker image](#build-the-docker-image)
+  - [Environment variables](#environment-variables)
+  - [Run the docker image](#run-the-docker-image)
+  - [Running without docker](#running-without-docker)
 - [Usage](#usage)
+- [Deployment](#deployemnt)
 - [Donations](#donations)
 
 ## Setup
@@ -34,22 +38,6 @@ In order to reduce the number of permissions the bot needs to work, a one-time s
 
 ```txt
 https://discord.com/channels/<GUILD_ID>/<CHANNEL_ID>
-```
-
-### Create your configuration file
-
-Create a `config.json` file that contains a list of the collections you want to track and how you want them to be displayed. Example:
-
-```json
-[
-    {
-        "guild_id": 1234,
-        "channel_id": 1234,
-        "collection_name": "name",
-        "sg721": "stars-address",
-        "prefix": "Floor: "
-    }
-]
 ```
 
 ### Create a discord bot
@@ -96,26 +84,66 @@ This bot is designed to run in a discord server without needing the stars CLI. I
 
 ### Build the docker image
 
+You can build the docker file with the following command:
+
 ```sh
 docker build -t stargazefloorbot:dev .
 ```
 
+If you need to build a multi-platform image, you can set up a [buildx](https://docs.docker.com/build/buildx/) context that supports the architectures you want and then build:
+
+```sh
+docker buildx build --push \
+  --platform linux/amd64,linux/arm64 \
+  -t ghcr.io/starship-ibc/stargaze-floor-bot:dev \
+  .
+
+docker pull ghcr.io/starship-ibc/stargaze-floor-bot:dev
+```
+
+> For buildx, you will need to `--push` to a registry and then pull it down because docker does not currently support loading multi-architecture images locally.
+
 ### Environment variables
 
-At minimum, you should set your DISCORD_KEY environment variable. The others are optional and can be included if you want to change them.
+At minimum, you should set your DISCORD_KEY environment variable and a set of BOT_CONFIG values. The others are optional and can be included if you want to change them.
 
 - `DISCORD_KEY` (required) The discord bot key
 - `INTERVAL` (default 300) Seconds between fetching new asks
 - `STRICT_VALIDATION` (default False) Uses strict validation when checking for asks. This will take longer to update the asks list, but will be more accurate as it checks for ownership, authorization, and other anomolies.
-- `CONFIG_FILE` (default `stargaze-floor-bot/config.json`) Location of the config file
+
+You will also need to set environment variables to load the collections you want to track and how you want them to be displayed. You should have at least one set of these variables (starting with 0) but you can replace the number and track multiple collections.
+
+- `BOT_CONFIG_0_GUILD_ID` (required) The guild id where the floor will be shown
+- `BOT_CONFIG_0_CHANNEL_ID` (required) The channel id in the guild where the floor will be shown
+- `BOT_CONFIG_0_COLLECTION_NAME` (required) The name of the collection
+- `BOT_CONFIG_0_SG721` (required) The SG721 address of the collection"
+- `BOT_CONFIG_0_PREFIX` (default "Floor: ") The prefix before the floor price. Be sure to include a space if desired
 
 ### Run the docker image
 
+To run the docker image, it's recommended that you create an `.env` file with all your environment variables. Example:
+
+```env
+DISCORD_KEY=abcd
+REFRESH_INTERVAL=60
+
+BOT_CONFIG_0_GUILD_ID=1234
+BOT_CONFIG_0_CHANNEL_ID=1234
+BOT_CONFIG_0_COLLECTION_NAME=Collection Name
+BOT_CONFIG_0_SG721=stars1234
+BOT_CONFIG_0_PREFIX=FloorA: 
+
+BOT_CONFIG_1_GUILD_ID=1234
+BOT_CONFIG_1_CHANNEL_ID=5678
+BOT_CONFIG_1_COLLECTION_NAME=Another Collection
+BOT_CONFIG_1_SG721=stars1567
+BOT_CONFIG_1_PREFIX=FloorB: 
+```
+
+> Reminder that the "prefix" requires a space at the end if you want one between the prefix and the price
+
 ```sh
-docker run \
-  -e DISCORD_KEY \
-  -v $PWD/config.json:/stargaze-floor-bot/config.json \
-  stargazefloorbot:dev
+docker run --env-file .env stargazefloorbot:dev
 ```
 
 You should see some basic output indicating that the configuration has loaded and a connection to Gateway established. Any invalid asks will also be sent to the output.
@@ -135,8 +163,10 @@ poetry install
 
 Set up your environment variables:
 
+It's recommended to put your variables in a `.env` file and then source them like below. This file is ignored by git.
+
 ```sh
-export DISCORD_KEY=<discord_key>
+source .env
 ```
 
 Run the project
@@ -144,6 +174,8 @@ Run the project
 ```sh
 poetry run python -m stargazefloorbot
 ```
+
+
 
 ## Usage
 
@@ -157,9 +189,37 @@ This command will list the enabled collections and the most recent floor price d
 
 This command will prompt the user for a collection, trait name, and trait value and then display the lowest three tokens including traits and link to the Stargaze marketplace for purchase.
 
+## Deployment
+
+This bot is designed to be deployed to [Akash], which lets you deploy containers to a decentralized cloud at a very low cost. The recommended method for deploying to Akash is to use [Akashlytics]. You will need at least 5 $AKT to create a deployment, which should be enough for the bot to run for a few months. You can also follow any of the published [Akash deployment guides].
+
+1. Copy `akash.yaml` to `akash-deploy.yaml`
+2. Edit the `services.bot.env` section of `akash-deploy.yaml` to match your [configuration](#environment-variables)
+3. In Akashlytics, click "CREATE DEPLOYMENT"
+4. Select "From a file" and select your `akash-deploy.yaml` file
+5. Give your deployment a name and click "CREATE DEPLOYMENT ➡️"
+
+    > You will be prompted to deposit 5 $AKT to get bids on your deployment. This will be used as an escrow account and the remainder refunded when you close the deployment.
+
+6. Click "DEPOSIT" and "Approve" to sign the transaction
+
+    > This will transmit a **"Create Deployment"** message that initializes the escrow contract and allows you to accept bids on your deployment.
+
+7. Select a bid and click "Accept Bid" and "Approve" to sign the transaction
+
+    > This is a **"Create Lease"** message and reserves your compute space until you close the deployment or the assicated escrow contract runs out of funds.
+
+It may take a few minutes your deployment to be published and get started. You should be able to see the container logs and system events.
+
+### Closing a deployment
+
+In order to stop spending $AKT, you will need to close your deployment which will shut down the bot and release any funds remaining in the deployment escrow account.
+
+Click on the "•••" next to your deployment and choose "Close deloyment." You should be prompted to sign a transaction that contains the "Close deployment" message. Approve this to shut down your deployment.
+
 ## Donations
 
-A special thanks to [Andromeda Labs](https://twitter.com/AndromaverseLab) for sponsoring this bot.
+A special thanks to [Andromeda Labs] for sponsoring this bot.
 
 If you'd like to make a donation, you may send $STARS to the following address. If you're like to sponsor a specific issue, feel free to include it in the memo line so I know what's most important to the community.
 
@@ -167,6 +227,10 @@ If you'd like to make a donation, you may send $STARS to the following address. 
 stars1z6mj02l2s8v0vsxfsark5v7t076ds8pu9nj2fv
 ```
 
+[Akash]: https://akash.network/
+[Akashlytics]: https://www.akashlytics.com/
+[Akash deployment guides]: https://docs.akash.network/guides
+[Andromeda Labs]: https://twitter.com/AndromaverseLab
 [stargaze-utils]: https://github.com/starship-ibc/stargaze-utils
 [/examples/get_collection_info.py]: https://github.com/starship-ibc/stargaze-utils/blob/main/examples/get_collection_info.py
 [/examples/get_new_collections.py]: https://github.com/starship-ibc/stargaze-utils/blob/main/examples/get_new_collections.py
