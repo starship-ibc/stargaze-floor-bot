@@ -75,8 +75,8 @@ The bot requires the collection metadata to be cached ahead of time. When buildi
 
 You can generate cache files by looking at the following examples in the [stargaze-utils] github repo:
 
-- [/examples/get_collection_info.py](https://github.com/starship-ibc/stargaze-utils/blob/main/examples/get_collection_info.py)
-- [/examples/get_new_collections.py](https://github.com/starship-ibc/stargaze-utils/blob/main/examples/get_new_collections.py)
+- [/examples/get_collection_info.py]
+- [/examples/get_new_collections.py]
 
 ## Installation
 
@@ -90,7 +90,7 @@ You can build the docker file with the following command:
 docker build -t stargazefloorbot:dev .
 ```
 
-If you need to build a multi-platform image, you can set up a [buildx](https://docs.docker.com/build/buildx/) context that supports the architectures you want and then build:
+If you need to build a multi-platform image, you can set up a [buildx] context that supports the architectures you want and then build:
 
 ```sh
 docker buildx build --push \
@@ -227,9 +227,12 @@ If you'd like to make a donation, you may send $STARS to the following address. 
 stars1z6mj02l2s8v0vsxfsark5v7t076ds8pu9nj2fv
 ```
 
+
 [Akash]: https://akash.network/
 [Akashlytics]: https://www.akashlytics.com/
 [Akash deployment guides]: https://docs.akash.network/guides
+[buildx]: https://docs.docker.com/build/buildx/
+[Discord]: https://discord.com/
 [Andromeda Labs]: https://twitter.com/AndromaverseLab
 [stargaze-utils]: https://github.com/starship-ibc/stargaze-utils
 [/examples/get_collection_info.py]: https://github.com/starship-ibc/stargaze-utils/blob/main/examples/get_collection_info.py
