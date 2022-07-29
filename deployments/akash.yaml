@@ -1,0 +1,47 @@
+---
+version: "2.0"
+
+services:
+  bot:
+    image: ghcr.io/starship-ibc/stargaze-floor-bot:dev
+    env:
+      - "DISCORD_KEY="
+      - "REFRESH_INTERVAL=60"
+      - "STRICT_VALIDATION=False"
+      - "BOT_CONFIG_0_GUILD_ID=123"
+      - "BOT_CONFIG_0_CHANNEL_ID="
+      - "BOT_CONFIG_0_COLLECTION_NAME="
+      - "BOT_CONFIG_0_SG721="
+      - "BOT_CONFIG_0_PREFIX="
+      
+    # Currently, Akash requires that we have at least 1 global port
+    # even though we aren't using it.
+    expose:
+      - port: 3000
+        as: 3000
+        to:
+          - global: true
+
+profiles:
+  compute:
+    bot:
+      resources:
+        cpu:
+          units: 0.5
+        memory:
+          size: 256Mi
+        storage:
+          size: 64Mi
+
+  placement:
+    akash:
+      pricing:
+        bot:
+          denom: uakt
+          amount: 50
+
+deployment:
+  bot:
+    akash:
+      profile: bot
+      count: 1

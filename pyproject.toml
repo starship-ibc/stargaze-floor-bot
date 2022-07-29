@@ -1,18 +1,31 @@
 [tool.poetry]
-name = "channel-bot"
+name = "stargaze-floor-bot"
 version = "0.1.0"
-description = "Sets discord channel names with info."
+description = "Gets floor information for stargaze collections."
 authors = ["Starship IBC <shrugs.rest0x@icloud.com>"]
+packages = [
+    { include = "stargazefloorbot" }
+]
 
 [tool.poetry.dependencies]
 python = "^3.10"
 requests = "^2.27.1"
 requests-cache = "^0.9.4"
+"discord.py" = {path = "./dependencies/discord.py-2.0.0a4405+ge0341c9e.tar.gz"}
+stargazeutils = {path = "./dependencies/stargazeutils-0.1.0.tar.gz"}
 
 [tool.poetry.dev-dependencies]
 black = "^22.3.0"
 isort = "^5.10.1"
 flake8 = "^4.0.1"
+pytest = "^7.1.2"
+pytest-cov = "^3.0.0"
+
+[tool.isort]
+profile = "black"
+
+[tool.pytest.ini_options]
+addopts = "--cov=stargazefloorbot --cov-report html"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
