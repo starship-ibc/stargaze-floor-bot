@@ -131,6 +131,17 @@ class FloorFlow:
         embed.add_field(name="Trait value", value=self.trait_value)
         embed.add_field(name="Listings", value=len(asks))
 
+        hubble_name = self.collection_name.lower().replace(" ", "-")
+        hubble_params = (
+            f"?sort=ask_price"
+            f"&trait-name={self.trait_name}"
+            f"&trait-value={self.trait_value}"
+        )
+        hubble_url = (
+            f"https://www.hubble.tools/collections/{hubble_name}{hubble_params}"
+        )
+        embed.add_field(name="See all", value=f"[Hubble link]({hubble_url})")
+
         embeds.append(embed)
 
         for ask_data in asks[:3]:
