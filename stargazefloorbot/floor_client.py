@@ -4,9 +4,6 @@ from typing import List
 
 import discord
 
-# from .stargaze import fetch_floor
-from discord import app_commands
-
 from stargazefloorbot.floor_flow import FloorFlow
 
 from .config import ConfigManager
@@ -53,7 +50,7 @@ class FloorClient(discord.Client):
         for config in self.config_manager.get_configs():
             self.floors[config.collection_name] = [0, 0, 0, 0, 0]
 
-        self.tree = app_commands.CommandTree(self)
+        self.tree = discord.app_commands.CommandTree(self)
 
         list_collections_cmd = discord.app_commands.Command(
             name="listcollections",
@@ -83,16 +80,13 @@ class FloorClient(discord.Client):
 
     async def update_floor(self):
         for config in self.config_manager.get_configs():
-            print(f"floor for {config.collection_name}")
             guild = await self.fetch_guild(config.guild_id)
             channels = {c.id: c for c in await guild.fetch_channels()}
             channel = channels[config.channel_id]
             floor_history = self.floors[config.collection_name]
             floor = floor_history[0]
             trend_emoji = get_trend_emoji(floor_history)
-            LOG.info(
-                f"Updating floor for {config.collection_name} to {floor} {trend_emoji}"
-            )
+            LOG.info(f"{config.collection_name} history: {floor_history}")
             await channel.edit(name=f"{config.prefix}{floor:,} {trend_emoji}")
 
     async def update_asks(self):
@@ -121,7 +115,7 @@ class FloorClient(discord.Client):
         """List the currently tracked collections."""
         message = "**Tracked collections**\n"
         for collection, floor in self.floors.items():
-            message += f"- {collection}: ({floor} $STARS)\n"
+            message += f"- {collection}: ({floor[0]:,} $STARS)\n"
         await interaction.response.send_message(message)
 
     async def query_trait_floor(

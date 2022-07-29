@@ -12,14 +12,10 @@ FROM poetry_builder as builder
 WORKDIR /stargaze-floor-bot
 COPY cache/ cache/
 COPY pyproject.toml .
-COPY poetry.lock .
 COPY dependencies/ dependencies/
-RUN poetry install --no-dev --no-root
+RUN poetry lock
 
 COPY stargazefloorbot/ stargazefloorbot/
 RUN poetry install --no-dev
-
-ENV INTERVAL=300
-ENV CONFIG_FILE=/stargaze-floor-bot/config.json
 
 ENTRYPOINT [ "python", "-m", "stargazefloorbot" ]

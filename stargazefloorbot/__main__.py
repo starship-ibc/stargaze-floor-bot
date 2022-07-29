@@ -16,15 +16,14 @@ if "DISCORD_KEY" not in os.environ.keys():
 
 discord_key = os.environ.get("DISCORD_KEY")
 interval = int(os.environ.get("REFRESH_INTERVAL", default="300"))
-config_file = os.environ.get("CONFIG_FILE", default="config.json")
 
 sv = os.environ.get("STRICT_VALIDATION", default="False")
 strict_validation = sv in ["true", "True", "TRUE", "1", "yes", "YES", "Yes"]
 
 LOG.info(f"Config interval = {interval} seconds")
-LOG.info(f"Config file = {config_file}")
+LOG.info(f"Config strict validation = {strict_validation}")
 
-config_manager = ConfigManager.from_json_file(config_file)
+config_manager = ConfigManager.from_env_var("BOT_CONFIG")
 intents = discord.Intents.default()
 client = FloorClient(
     intents=intents,

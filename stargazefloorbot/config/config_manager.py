@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 from typing import List
 
 from .bot_config import BotConfig
@@ -13,6 +14,10 @@ class ConfigManager:
 
     def add_config(self, config: BotConfig):
         self._configs[config.key] = config
+        LOG.info(f"Config loaded for guild: {config.guild_id}")
+        LOG.info(f" Channel Id: {config.channel_id}")
+        LOG.info(f" Collection SG721: {config.sg721}")
+        LOG.info(f" Prefix: '{config.prefix}'")
 
     def remove_config(self, guild_id: int, collection: str) -> BotConfig:
         key = BotConfig(guild_id, None, collection).key
@@ -34,9 +39,25 @@ class ConfigManager:
         config_manager = cls()
         for config_data in configs:
             config = BotConfig.from_dict(config_data)
-            LOG.info(f"Config loaded for guild: {config.guild_id}")
-            LOG.info(f" Channel Id: {config.channel_id}")
-            LOG.info(f" Collection SG721: {config.sg721}")
-            LOG.info(f" Prefix: '{config.prefix}'")
             config_manager.add_config(config)
+        return config_manager
+
+    @classmethod
+    def from_env_var(cls, base_env_var):
+        LOG.info(f"Loading configuration from environment {base_env_var}")
+
+        def load_config(i):
+            guild_id = int(os.environ.get(f"{base_env_var}_{i}_GUILD_ID"))
+            channel_id = int(os.environ.get(f"{base_env_var}_{i}_CHANNEL_ID"))
+            collection_name = os.environ.get(f"{base_env_var}_{i}_COLLECTION_NAME")
+            sg721 = os.environ.get(f"{base_env_var}_{i}_SG721")
+            prefix = os.environ.get(f"{base_env_var}_{i}_PREFIX", "Floor: ")
+            return BotConfig(guild_id, channel_id, collection_name, sg721, prefix)
+
+        i = 0
+        config_manager = cls()
+        while f"{base_env_var}_{i}_SG721" in os.environ.keys():
+            config_manager.add_config(load_config(i))
+            i += 1
+
         return config_manager
