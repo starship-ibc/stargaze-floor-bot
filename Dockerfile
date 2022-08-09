@@ -14,8 +14,8 @@ COPY cache/ cache/
 COPY pyproject.toml .
 COPY dependencies/ dependencies/
 RUN poetry lock
+RUN poetry install --no-dev
 
 COPY stargazefloorbot/ stargazefloorbot/
-RUN poetry install --no-dev
 
 ENTRYPOINT [ "python", "-m", "stargazefloorbot" ]

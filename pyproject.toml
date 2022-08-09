@@ -1,11 +1,8 @@
 [tool.poetry]
-name = "stargaze-floor-bot"
+name = "stargazefloorbot"
 version = "0.1.0"
 description = "Gets floor information for stargaze collections."
 authors = ["Starship IBC <shrugs.rest0x@icloud.com>"]
-packages = [
-    { include = "stargazefloorbot" }
-]
 
 [tool.poetry.dependencies]
 python = "^3.10"
