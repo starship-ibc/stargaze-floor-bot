@@ -74,23 +74,45 @@ class FloorClient(discord.Client):
             guild = discord.Object(config.guild_id)
             self.tree.copy_global_to(guild=guild)
             await self.tree.sync(guild=guild)
-        self.bg_task = self.loop.create_task(self.track_floor_pricing())
 
     async def on_ready(self):
         LOG.info(f"Logged in as {self.user} (ID: {self.user.id})")
 
+        # We're going to pre-fetch the guild and channel objects
+        # so we don't get rate-limited as much.
+        guilds = {}
+        guild_channels = {}
+        for key, config in self.config_manager._configs.items():
+            if config.guild_id not in guilds:
+                guilds[config.guild_id] = await self.fetch_guild(config.guild_id)
+            config.guild = guilds[config.guild_id]
+
+            if config.guild_id not in guild_channels:
+                guild_channels[config.guild_id] = {
+                    c.id: c for c in await config.guild.fetch_channels()
+                }
+            config.channel = guild_channels[config.guild_id][config.channel_id]
+
+            self.config_manager._configs[key] = config
+
+        self.bg_task = self.loop.create_task(self.track_floor_pricing())
+
     async def update_floor(self):
         for config in self.config_manager.get_configs():
-            guild = await self.fetch_guild(config.guild_id)
-            channels = {c.id: c for c in await guild.fetch_channels()}
-            channel = channels[config.channel_id]
+            channel = config.channel
             floor_history = self.floors[config.collection_name]
             floor = floor_history[0]
             trend_emoji = get_trend_emoji(floor_history)
-            LOG.info(f"{config.collection_name} history: {floor_history}")
+            LOG.info(
+                f"{config.collection_name} history: {[str(x) for x in floor_history]}"
+            )
             await channel.edit(name=f"{config.prefix}{floor:,} {trend_emoji}")
 
     async def update_asks(self):
+        activity = discord.Activity(
+            type=discord.ActivityType.watching, name="the stars 🌌🔭"
+        )
+        await self.change_presence(activity=activity)
         for config in self.config_manager.get_configs():
             LOG.info(f"Updating asks for '{config.collection_name}'")
             trait_asks = fetch_trait_asks(
@@ -103,14 +125,16 @@ class FloorClient(discord.Client):
             self.floors[config.collection_name].insert(0, new_floor)
             self.floors[config.collection_name].pop()
             LOG.info(f"Finished updating asks for '{config.collection_name}'")
+        await self.change_presence(activity=None)
 
     async def track_floor_pricing(self):
-        await self.wait_until_ready()
-        print("ready")
-        while not self.is_closed():
+        while True:
             await self.update_asks()
+            LOG.info("Waiting until ready...")
+            await self.wait_until_ready()
             await self.update_floor()
-            await asyncio.sleep(self.interval)  # task runs every 60 seconds
+            LOG.info(f"Checking for asks again in {self.interval} seconds")
+            await asyncio.sleep(self.interval)
 
     async def list_collections(self, interaction: discord.Interaction):
         """List the currently tracked collections."""

@@ -6,7 +6,11 @@ import discord
 from .config import ConfigManager
 from .floor_client import FloorClient
 
-logging.basicConfig(level=logging.INFO)
+LOG_LEVEL = os.environ.get("LOG_LEVEL", default="INFO")
+print(f"Setting logging level to {LOG_LEVEL}")
+
+logging.basicConfig(level=logging._nameToLevel[LOG_LEVEL])
+logging.getLogger("urllib3").setLevel(logging.WARNING)
 logging.getLogger("stargazeutils.market.market_ask").setLevel(logging.ERROR)
 LOG = logging.getLogger(__name__)
 
