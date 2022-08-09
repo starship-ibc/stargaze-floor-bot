@@ -12,6 +12,8 @@ class BotConfig:
         self.collection_name = collection_name
         self.sg721 = sg721
         self.prefix = prefix
+        self.guild = None
+        self.channel = None
 
     @property
     def key(self) -> str:
