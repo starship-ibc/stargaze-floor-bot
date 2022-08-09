@@ -2,13 +2,13 @@ import logging
 import os
 
 from stargazeutils.collection import Sg721Client
-from stargazeutils.common import MARKET_CONTRACT
+from stargazeutils.common import DEFAULT_MARKET_CONTRACT
 from stargazeutils.market import MarketClient
 from stargazeutils.stargaze import QueryMethod, StargazeClient
 
 LOG = logging.getLogger(__name__)
 sg_client = StargazeClient(query_method=QueryMethod.REST)
-market = MarketClient(MARKET_CONTRACT, sg_client=sg_client)
+market = MarketClient(DEFAULT_MARKET_CONTRACT, sg_client=sg_client)
 
 
 def fetch_trait_asks(collection_name: str, strict_validation: bool = False):
