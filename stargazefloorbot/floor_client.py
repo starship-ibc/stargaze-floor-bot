@@ -109,6 +109,10 @@ class FloorClient(discord.Client):
             await channel.edit(name=f"{config.prefix}{floor:,} {trend_emoji}")
 
     async def update_asks(self):
+        activity = discord.Activity(
+            type=discord.ActivityType.watching, name="the stars 🌌🔭"
+        )
+        await self.change_presence(activity=activity)
         for config in self.config_manager.get_configs():
             LOG.info(f"Updating asks for '{config.collection_name}'")
             trait_asks = fetch_trait_asks(
@@ -121,12 +125,13 @@ class FloorClient(discord.Client):
             self.floors[config.collection_name].insert(0, new_floor)
             self.floors[config.collection_name].pop()
             LOG.info(f"Finished updating asks for '{config.collection_name}'")
+        await self.change_presence(activity=None)
 
     async def track_floor_pricing(self):
         while True:
             await self.update_asks()
             LOG.info("Waiting until ready...")
-        await self.wait_until_ready()
+            await self.wait_until_ready()
             await self.update_floor()
             LOG.info(f"Checking for asks again in {self.interval} seconds")
             await asyncio.sleep(self.interval)
