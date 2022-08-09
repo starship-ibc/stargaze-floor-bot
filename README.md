@@ -64,6 +64,7 @@ You will want to give your bot the following permissions:
 - Manage Messages
 - Embed Links
 - Attach Files
+- Connect to voice channels
 
 Now copy the URL generated at the bottom and paste it in your browser to invite the bot to your server.
 
