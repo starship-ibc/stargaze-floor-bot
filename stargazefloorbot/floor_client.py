@@ -103,7 +103,9 @@ class FloorClient(discord.Client):
             floor_history = self.floors[config.collection_name]
             floor = floor_history[0]
             trend_emoji = get_trend_emoji(floor_history)
-            LOG.info(f"{config.collection_name} history: {floor_history}")
+            LOG.info(
+                f"{config.collection_name} history: {[str(x) for x in floor_history]}"
+            )
             await channel.edit(name=f"{config.prefix}{floor:,} {trend_emoji}")
 
     async def update_asks(self):
