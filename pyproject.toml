@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "stargazefloorbot"
-version = "0.1.1"
+version = "1.0.0"
 description = "Gets floor information for stargaze collections."
 authors = ["Starship IBC <shrugs.rest0x@icloud.com>"]
 
@@ -10,6 +10,7 @@ requests = "^2.27.1"
 requests-cache = "^0.9.4"
 "discord.py" = {path = "./dependencies/discord.py-2.0.0a4405+ge0341c9e.tar.gz"}
 stargazeutils = {path = "./dependencies/stargazeutils-0.2.0.tar.gz"}
+PyYAML = "^6.0"
 
 [tool.poetry.dev-dependencies]
 black = "^22.3.0"

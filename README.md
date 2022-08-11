@@ -13,7 +13,7 @@ This is a [Discord] bot designed to display floor pricing for Stargaze NFT colle
   - [Create cached collection info](#create-cached-collection-info)
 - [Installation](#installation)
   - [Build the docker image](#build-the-docker-image)
-  - [Environment variables](#environment-variables)
+  - [Configuration](#configuration)
   - [Run the docker image](#run-the-docker-image)
   - [Running without docker](#running-without-docker)
 - [Usage](#usage)
@@ -104,47 +104,64 @@ docker pull ghcr.io/starship-ibc/stargaze-floor-bot:dev
 
 > For buildx, you will need to `--push` to a registry and then pull it down because docker does not currently support loading multi-architecture images locally.
 
-### Environment variables
+### Configuration
 
-At minimum, you should set your DISCORD_KEY environment variable and a set of BOT_CONFIG values. The others are optional and can be included if you want to change them.
+Configuration is now handled by a yaml file that must be present for the system to start. By default, the app looks for a "config.yaml" file but this can be configured via the `CONFIG_FILE` environment variable.
 
-- `DISCORD_KEY` (required) The discord bot key
-- `INTERVAL` (default 300) Seconds between fetching new asks
-- `STRICT_VALIDATION` (default False) Uses strict validation when checking for asks. This will take longer to update the asks list, but will be more accurate as it checks for ownership, authorization, and other anomolies.
+Below is an example file:
 
-You will also need to set environment variables to load the collections you want to track and how you want them to be displayed. You should have at least one set of these variables (starting with 0) but you can replace the number and track multiple collections.
+```yaml
+# required, the discord bot key
+discord_key: ""
 
-- `BOT_CONFIG_0_GUILD_ID` (required) The guild id where the floor will be shown
-- `BOT_CONFIG_0_CHANNEL_ID` (required) The channel id in the guild where the floor will be shown
-- `BOT_CONFIG_0_COLLECTION_NAME` (required) The name of the collection
-- `BOT_CONFIG_0_SG721` (required) The SG721 address of the collection"
-- `BOT_CONFIG_0_PREFIX` (default "Floor: ") The prefix before the floor price. Be sure to include a space if desired
+# optional, logging level
+log_level: INFO
+
+# optional, a default refresh interval for all collections
+refresh_interval: 300
+
+# optional, if true for a collection, will perform strict validation. this is 
+# more accurate but can take a significantly longer time and may cause discord issues
+strict_validation: False 
+
+# A list of collection information
+collections:
+    # optional, the name of the collection (defaults to the SG721 address)
+  - name: Andromaverse
+
+    # required, the SG721 address
+    sg721: stars1quce89l8clsn8s5tmq5sylg370h58xfnkwadx72crjv90jmetp4syt4sgr
+
+    # optional, a prefix to put in front of the floor value
+    # note the space at the end is often desired
+    prefix: "Floor: "
+
+    # optional, overwrites the default interval for this collection only
+    refresh_interval: 300
+
+    # optional, overwrites the default value above for this collection only
+    strict_validation: False
+
+    # optional, use to disable the "querytraitfloor" command, such as if the
+    # collection has no traits to query
+    enable_trait_query: True
+
+    # required, a list of channels to set the floor price
+    channels:
+        # required, the guild id
+      - guild_id: 977279710713245766
+
+        # required, the channel id. the bot should have view, manage, and connect
+        # permissions for this to work
+        channel_id: 983204853545316392
+```
 
 ### Run the docker image
 
-To run the docker image, it's recommended that you create an `.env` file with all your environment variables. Example:
-
-```env
-DISCORD_KEY=abcd
-REFRESH_INTERVAL=60
-
-BOT_CONFIG_0_GUILD_ID=1234
-BOT_CONFIG_0_CHANNEL_ID=1234
-BOT_CONFIG_0_COLLECTION_NAME=Collection Name
-BOT_CONFIG_0_SG721=stars1234
-BOT_CONFIG_0_PREFIX=FloorA: 
-
-BOT_CONFIG_1_GUILD_ID=1234
-BOT_CONFIG_1_CHANNEL_ID=5678
-BOT_CONFIG_1_COLLECTION_NAME=Another Collection
-BOT_CONFIG_1_SG721=stars1567
-BOT_CONFIG_1_PREFIX=FloorB: 
-```
-
-> Reminder that the "prefix" requires a space at the end if you want one between the prefix and the price
+To run the docker image with a local yaml file, you can mount it within the container:
 
 ```sh
-docker run --env-file .env stargazefloorbot:dev
+docker run -v $PWD/config.yaml:/stargaze-floor-bot/config.yaml stargazefloorbot:dev
 ```
 
 You should see some basic output indicating that the configuration has loaded and a connection to Gateway established. Any invalid asks will also be sent to the output.
@@ -162,21 +179,11 @@ Install the python dependencies:
 poetry install
 ```
 
-Set up your environment variables:
-
-It's recommended to put your variables in a `.env` file and then source them like below. This file is ignored by git.
-
-```sh
-source .env
-```
-
 Run the project
 
 ```sh
 poetry run python -m stargazefloorbot
 ```
-
-
 
 ## Usage
 
@@ -195,7 +202,7 @@ This command will prompt the user for a collection, trait name, and trait value 
 This bot is designed to be deployed to [Akash], which lets you deploy containers to a decentralized cloud at a very low cost. The recommended method for deploying to Akash is to use [Akashlytics]. You will need at least 5 $AKT to create a deployment, which should be enough for the bot to run for a few months. You can also follow any of the published [Akash deployment guides].
 
 1. Copy `akash.yaml` to `akash-deploy.yaml`
-2. Edit the `services.bot.env` section of `akash-deploy.yaml` to match your [configuration](#environment-variables)
+2. Edit the "args" to save a config.yaml file to the container and run the module.
 3. In Akashlytics, click "CREATE DEPLOYMENT"
 4. Select "From a file" and select your `akash-deploy.yaml` file
 5. Give your deployment a name and click "CREATE DEPLOYMENT ➡️"

@@ -453,6 +453,14 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "pyyaml"
+version = "6.0"
+description = "YAML parser and emitter for Python"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[[package]]
 name = "requests"
 version = "2.28.1"
 description = "Python HTTP for Humans."
@@ -578,7 +586,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "27fde737196e24a7f6baaf561efc247ec624464f31f8a6ae6878a3fba1f12893"
+content-hash = "beee51f9e85bdb63e216a5be9ef29745680e585e23a256316e753c55f3d29f9c"
 
 [metadata.files]
 aiohttp = []
@@ -766,6 +774,7 @@ pytest-cov = [
 python-baseconv = [
     {file = "python-baseconv-1.2.2.tar.gz", hash = "sha256:0539f8bd0464013b05ad62e0a1673f0ac9086c76b43ebf9f833053527cd9931b"},
 ]
+pyyaml = []
 requests = []
 requests-cache = []
 six = [
