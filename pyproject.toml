@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "stargazefloorbot"
-version = "0.1.1"
+version = "1.0.0"
 description = "Gets floor information for stargaze collections."
 authors = ["Starship IBC <shrugs.rest0x@icloud.com>"]
 
