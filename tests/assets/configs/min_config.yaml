@@ -1,6 +1,4 @@
 
-discord_key: "test-key"
-
 collections:
   - sg721: stars1
     channels:

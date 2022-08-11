@@ -1,5 +1,3 @@
-
-discord_key: "test-key"
 log_level: DEBUG
 refresh_interval: 30
 strict_validation: False

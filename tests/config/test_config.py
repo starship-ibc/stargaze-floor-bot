@@ -6,7 +6,6 @@ from stargazefloorbot.config.config import Config
 def test_config_should_load_defaults():
     yaml_file = "tests/assets/configs/min_config.yaml"
     config = Config.from_yaml(yaml_file)
-    assert config.discord_key == "test-key"
     assert config.log_level == "INFO"
     assert config.refresh_interval == 300
     assert config.strict_validation is False
@@ -27,7 +26,6 @@ def test_config_should_load_defaults():
 def test_config_should_override():
     yaml_file = "tests/assets/configs/test_config.yaml"
     config = Config.from_yaml(yaml_file)
-    assert config.discord_key == "test-key"
     assert config.log_level == "DEBUG"
     assert config.refresh_interval == 30
     assert config.strict_validation is False

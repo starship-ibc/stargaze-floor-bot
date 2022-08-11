@@ -106,14 +106,16 @@ docker pull ghcr.io/starship-ibc/stargaze-floor-bot:dev
 
 ### Configuration
 
-Configuration is now handled by a yaml file that must be present for the system to start. By default, the app looks for a "config.yaml" file but this can be configured via the `CONFIG_FILE` environment variable.
+Configuration is now handled by a minimal set of environment variables and a yaml file that must be present for the system to start.
 
-Below is an example file:
+The following environment variables should be set:
+
+- `DISCORD_KEY` The discord bot secret key
+- `CONFIG_FILE` The path to the yaml config file
+
+The following is an example yaml config file:
 
 ```yaml
-# required, the discord bot key
-discord_key: ""
-
 # optional, logging level
 log_level: INFO
 
@@ -203,9 +205,10 @@ This bot is designed to be deployed to [Akash], which lets you deploy containers
 
 1. Copy `akash.yaml` to `akash-deploy.yaml`
 2. Edit the "args" to save a config.yaml file to the container and run the module.
-3. In Akashlytics, click "CREATE DEPLOYMENT"
-4. Select "From a file" and select your `akash-deploy.yaml` file
-5. Give your deployment a name and click "CREATE DEPLOYMENT ➡️"
+3. Set the `DISCORD_KEY` environment variable.
+4. In Akashlytics, click "CREATE DEPLOYMENT"
+5. Select "From a file" and select your `akash-deploy.yaml` file
+6. Give your deployment a name and click "CREATE DEPLOYMENT ➡️"
 
     > You will be prompted to deposit 5 $AKT to get bids on your deployment. This will be used as an escrow account and the remainder refunded when you close the deployment.
 
