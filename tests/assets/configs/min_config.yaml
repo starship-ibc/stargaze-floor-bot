@@ -1,0 +1,8 @@
+
+discord_key: "test-key"
+
+collections:
+  - sg721: stars1
+    channels:
+      - guild_id: 0
+        channel_id: 1

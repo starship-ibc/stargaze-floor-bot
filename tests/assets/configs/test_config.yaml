@@ -1,0 +1,27 @@
+
+discord_key: "test-key"
+log_level: DEBUG
+refresh_interval: 30
+strict_validation: False
+
+collections:
+  - name: C1
+    sg721: stars1
+    prefix: "Test: "
+    enable_trait_query: True
+    channels:
+      - guild_id: 0
+        channel_id: 1
+      - guild_id: 2
+        channel_id: 3
+  
+  - sg721: stars2
+    prefix: "Test2: "
+    enable_trait_query: False
+    strict_validation: True
+    refresh_interval: 6000
+    channels:
+      - guild_id: 0
+        channel_id: 4
+      - guild_id: 2
+        channel_id: 5

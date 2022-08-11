@@ -1,6 +1,7 @@
 .DS_Store
 cache/collections/
 config.json
+config*.yaml
 deployments/akash-prod.yaml
 
 # Byte-compiled / optimized / DLL files
