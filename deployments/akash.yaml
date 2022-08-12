@@ -4,11 +4,13 @@ version: "2.0"
 services:
   bot:
     image: ghcr.io/starship-ibc/stargaze-floor-bot:dev
+    env:
+      - "DISCORD_KEY=secret"
     command:
       - "sh"
       - "-c"
     args:
-      - "echo \"discord_key: \\\"key\\\"\n\" > config.yaml && python -m stargazefloorbot"
+      - "echo \"log_level: \\\"INFO\\\"\n\" > config.yaml"
       
     # Currently, Akash requires that we have at least 1 global port
     # even though we aren't using it.
