@@ -1,4 +1,6 @@
 import logging
+import os
+from time import time
 from typing import List
 
 import yaml
@@ -24,6 +26,11 @@ class Config:
     @classmethod
     def from_yaml(cls, yaml_file):
         LOG.info(f"Loading configuration from file {yaml_file}")
+
+        if not os.path.exists(yaml_file):
+            LOG.warning(f"File {yaml_file} not found. Waiting 5 seconds.")
+            time.sleep(5)
+
         with open(yaml_file) as f:
             values = yaml.safe_load(f)
 
