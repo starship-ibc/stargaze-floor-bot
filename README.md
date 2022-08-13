@@ -203,8 +203,14 @@ This command will prompt the user for a collection, trait name, and trait value 
 
 This bot is designed to be deployed to [Akash], which lets you deploy containers to a decentralized cloud at a very low cost. The recommended method for deploying to Akash is to use [Akashlytics]. You will need at least 5 $AKT to create a deployment, which should be enough for the bot to run for a few months. You can also follow any of the published [Akash deployment guides].
 
+Before you deploy to akash, you'll need to create an image with the `config.yaml` file built in. We hope to update this in the future, but right now Akash doesn't have a great way to add a configuration file to an existing container.
+
+Edit the `Dockerfile` to copy the appropriate config.yaml file into the image and then build it with a tag like "1.0.6-andr".
+
+> If you're on a computer with arm64 architecture such as M1 mac, you'll need to cross-compile with buildx as most of the Akash providers run amd64 architecture.
+
 1. Copy `akash.yaml` to `akash-deploy.yaml`
-2. Edit the "args" to save a config.yaml file to the container and run the module.
+2. Set the `image` to your custom image you created.
 3. Set the `DISCORD_KEY` environment variable.
 4. In Akashlytics, click "CREATE DEPLOYMENT"
 5. Select "From a file" and select your `akash-deploy.yaml` file
